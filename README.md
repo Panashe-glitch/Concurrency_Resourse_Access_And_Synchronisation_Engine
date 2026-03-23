@@ -32,7 +32,7 @@
 
 ## 1. System Overview
 
-ConRes manages safe, concurrent access to a shared file (`ProductSpecification.txt`) by multiple authenticated users. The system enforces bounded admission, readers–writer mutual exclusion, deadlock freedom, and session liveness — properties that are not merely assumed but formally modelled via Petri nets, machine-verified by the TINA toolbox, asserted at runtime every 500ms by a live dashboard, and stress-tested under contention across 280 threads and 2,500 operations with zero violations.
+ConRes system manages safe, concurrent access to a shared file (`ProductSpecification.txt`) by multiple authenticated users. The system enforces bounded admission, readers–writer mutual exclusion, deadlock freedom, and session liveness — properties that are not merely assumed but formally modelled via Petri nets, machine-verified by the TINA toolbox, asserted at runtime every 500ms by a live dashboard, and stress-tested under contention across 280 threads and 2,500 operations with zero violations.
 
 **At a glance:**
 
@@ -46,7 +46,7 @@ ConRes manages safe, concurrent access to a shared file (`ProductSpecification.t
 | UI | Console (ANSI) + 9-panel web dashboard (port 9090) |
 | Architecture | 4-layer + 6 interfaces for CW2 distributed migration |
 
-### What makes this system different
+### Key Atrributes
 
 Most concurrent systems demonstrate correctness anecdotally — "we ran it and nothing broke." ConRes takes a different approach:
 
