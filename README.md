@@ -196,10 +196,10 @@ The net has 2 P-semi-flows.
 </details>
 
 **Flow 1: `ActiveUsers + AvailableSlots = 4`**  
-This is the permit conservation invariant — it proves S8 directly. Since AvailableSlots is bounded below by 0 (a place cannot hold negative tokens), S1 (ActiveUsers ≤ 4) and S6 (AvailableSlots ≥ 0) follow as corollaries.
+This is the permit conservation invariant which proves S8 directly. Since AvailableSlots is bounded below by 0 (a place cannot hold negative tokens), S1 (ActiveUsers ≤ 4) and S6 (AvailableSlots ≥ 0) follow as corollaries.
 
 **Flow 2: `ActiveUsers + LoggedOut + Rejected + UnauthenticatedUsers + WaitingUsers = 6`**  
-Total user conservation. No user is created or destroyed by the net — every token that enters the system exits through LoggedOut or Rejected. This also proves S9 (partial): a token cannot be in two places simultaneously, so each user is in exactly one state.
+Total user conservation. No user is created or destroyed by the net. Every token that enters the system exits through LoggedOut or Rejected. This also proves S9 (partial): a token cannot be in two places simultaneously, so each user is in exactly one state.
 
 #### TINA Reachability Analysis
 
@@ -241,7 +241,7 @@ AvailableSlots = 4 (all permits returned).
 
 </details>
 
-The dead state is expected: it represents system shutdown. The enabled column is empty — no transition can fire. AvailableSlots×4 confirms S8 one final time.
+The dead state is expected: it represents system shutdown. The enabled column is empty therefore no transition can fire. AvailableSlots×4 confirms S8 one final time.
 
 ### 5.2 Readers–Writer Coordination Net
 
