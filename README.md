@@ -47,7 +47,7 @@ ConRes system manages safe, concurrent access to a shared file (`ProductSpecific
 
 ### Key Atrributes
 
-Most concurrent systems demonstrate correctness anecdotally — "we ran it and nothing broke." ConRes takes a different approach:
+Most concurrent systems demonstrate correctness anecdotally i.e. "we ran it and nothing broke." ConRes takes a different approach:
 
 1. **Specification** Every requirement is translated into a named, falsifiable property (S1–S10, L1–L4).
 2. **Formal proof** Structural safety properties are proven as Petri net place invariants.
