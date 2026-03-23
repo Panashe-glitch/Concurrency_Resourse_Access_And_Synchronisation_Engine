@@ -4,7 +4,6 @@
 
 > Module: 6CM604: Concurrent and Distributed Systems  
 > University of Derby · School of Computing and Engineering
-> 100717173
 
 ---
 
