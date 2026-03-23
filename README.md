@@ -2,7 +2,7 @@
 
 **A formally modelled, empirically validated concurrent resource access engine with runtime verification and extensible architecture.**
 
-> Module: 6CM604 — Concurrent and Distributed Systems  
+> Module: 6CM604: Concurrent and Distributed Systems  
 > University of Derby · School of Computing and Engineering
 > 100717173
 
@@ -32,7 +32,7 @@
 
 ## 1. System Overview
 
-ConRes system manages safe, concurrent access to a shared file (`ProductSpecification.txt`) by multiple authenticated users. The system enforces bounded admission, readers–writer mutual exclusion, deadlock freedom, and session liveness — properties that are not merely assumed but formally modelled via Petri nets, machine-verified by the TINA toolbox, asserted at runtime every 500ms by a live dashboard, and stress-tested under contention across 280 threads and 2,500 operations with zero violations.
+ConRes system manages safe, concurrent access to a shared file (`ProductSpecification.txt`) by multiple authenticated users. The system enforces bounded admission, readers–writer mutual exclusion, deadlock freedom, and session liveness. Properties are not merely assumed but formally modelled via Petri nets, machine-verified by the TINA toolbox (https://www.tina.com/), asserted at runtime every 500ms by a live dashboard, and stress-tested under contention across 280 threads and 2,500 operations with zero violations.
 
 **At a glance:**
 
@@ -50,11 +50,11 @@ ConRes system manages safe, concurrent access to a shared file (`ProductSpecific
 
 Most concurrent systems demonstrate correctness anecdotally — "we ran it and nothing broke." ConRes takes a different approach:
 
-1. **Specification** — every requirement is translated into a named, falsifiable property (S1–S10, L1–L4).
-2. **Formal proof** — structural safety properties are proven as Petri net place invariants.
-3. **Machine verification** — proofs are confirmed by TINA, not trusted as hand calculations.
-4. **Runtime assertion** — the dashboard is not a display layer but a verification surface. Every poll cycle checks the same invariants the Petri nets prove. If implementation diverges from model, the dashboard turns red.
-5. **Empirical validation** — stress tests exercise every property under realistic contention, with a continuous invariant monitor running on a background thread.
+1. **Specification** Every requirement is translated into a named, falsifiable property (S1–S10, L1–L4).
+2. **Formal proof** Structural safety properties are proven as Petri net place invariants.
+3. **Machine verification** Proofs are confirmed by TINA, not trusted as hand calculations.
+4. **Runtime assertion** The dashboard is not a display layer but a verification surface. Every poll cycle checks the same invariants the Petri nets prove. If implementation diverges from model, the dashboard turns red.
+5. **Empirical validation** Stress tests exercise every property under realistic contention, with a continuous invariant monitor running on a background thread.
 
 The result is a system where correctness is established at four independent levels: structural proof, machine verification, runtime assertion, and empirical stress testing. No single tier is trusted in isolation.
 
@@ -78,7 +78,7 @@ Phase 4  Architecture      ← ─ ─ ─ → Phase 7a  Contract Tests
               Phase 5+6  Implementation & UI
 ```
 
-The V-Model enforces a discipline: no specification exists without a corresponding verification, and no test exists without a traceable specification. Phase 3 (Petri nets) is the bridge — it translates Phase 2's abstract properties into structural proofs that Phase 7a can ground-truth against the implementation.
+The V-Model enforces a discipline: no specification exists without a corresponding verification, and no test exists without a traceable specification. Phase 3 (Petri nets) is the bridge. It translates Phase 2's abstract properties into structural proofs that Phase 7a can ground-truth against the implementation.
 
 ---
 
@@ -157,12 +157,12 @@ These are not in the scenario — they are derived from analysing the requiremen
 
 | ID | Property | Enforcement | Formally proven? |
 |---|---|---|---|
-| L1 | Eventual admission | Fair semaphore FIFO + session timeout watchdog | No — implementation guarantee + timeout enforcement. Admission net `bounded: Y` confirms permits cannot leak |
-| L2 | Writer eventually writes | Fair RWLock FIFO (see [§7.3](#73-why-writers-are-not-starved)) | No — but RW net `live: Y` confirms no structural deadlock in RW domain |
-| L3 | Deadlock freedom | C9 strict ordering eliminates Coffman condition 4 | No — architectural constraint. RW net `live: Y, dead: 0` provides additional confirmation |
-| L4 | No starvation | `fair=true` on both primitives | No — but RW net `live: Y, reversible: Y` confirms all transitions always fireable |
+| L1 | Eventual admission | Fair semaphore FIFO + session timeout watchdog | No. Implementation guarantee + timeout enforcement. Admission net `bounded: Y` confirms permits cannot leak |
+| L2 | Writer eventually writes | Fair RWLock FIFO (see [§7.3](#73-why-writers-are-not-starved)) | No. But RW net `live: Y` confirms no structural deadlock in RW domain |
+| L3 | Deadlock freedom | C9 strict ordering eliminates Coffman condition 4 | No. Architectural constraint. RW net `live: Y, dead: 0` provides additional confirmation |
+| L4 | No starvation | `fair=true` on both primitives | No. But RW net `live: Y, reversible: Y` confirms all transitions always fireable |
 
-The separation is deliberate: safety properties are structurally provable and machine-verifiable; liveness properties depend on implementation-level fairness guarantees that cannot be fully expressed in basic P/T Petri nets (see [§5.4](#54-scope-limitations)). However, the RW net's TINA results (`live: Y`, `reversible: Y`, `dead: 0`) provide structural support — every transition is fireable from every reachable state, confirming no structural deadlock or unreachable operations within the RW coordination domain.
+The separation is deliberate: safety properties are structurally provable and machine-verifiable; liveness properties depend on implementation-level fairness guarantees that cannot be fully expressed in basic P/T Petri nets (see [§5.4](#54-scope-limitations)). However, the RW net's TINA results (`live: Y`, `reversible: Y`, `dead: 0`) provide structural support. Every transition is fireable from every reachable state, confirming no structural deadlock or unreachable operations within the RW coordination domain.
 
 ![Formal Properties](docs/phase2_formal_properties.png)
 *Figure 2. Phase 2 formal properties traceability matrix. Every property maps to an enforcement mechanism, requirement source, and verification tier.*
@@ -221,9 +221,9 @@ Terminal marking: LoggedOut*2, AvailableSlots*4, Rejected*4
 
 </details>
 
-- **bounded: YES** — no place exceeds its initial token count in any reachable state. This is the single most important result: it confirms the net cannot diverge.
-- **live: ?** — not determined, and this is correct by design. Terminal states exist where all users have logged out or been rejected. The admission net is designed to terminate. Compare with the RW coordination net (§5.2), which is `live: Y` because users cycle continuously with no terminal states.
-- **Terminal marking: AvailableSlots×4** — all permits returned. S8 holds at termination.
+- **bounded: YES** No place exceeds its initial token count in any reachable state. This is the single most important result: it confirms the net cannot diverge.
+- **live: ?** Not determined, and this is correct by design. Terminal states exist where all users have logged out or been rejected. The admission net is designed to terminate. Compare with the RW coordination net (§5.2), which is `live: Y` because users cycle continuously with no terminal states.
+- **Terminal marking: AvailableSlots×4** All permits returned. S8 holds at termination.
 
 #### TINA Stepper (Terminal State Inspection)
 
@@ -257,7 +257,7 @@ The RW net uses complementary places rather than inhibitor arcs, keeping the mod
 #### TINA Structural Analysis (P-semi-flows)
 
 <details>
-<summary>Raw TINA struct output — rw_coordination</summary>
+<summary>Raw TINA struct output: rw_coordination</summary>
 
 ```
 Struct version 3.9.0 -- 10/21/25 -- LAAS/CNRS
@@ -305,22 +305,22 @@ ANALYSIS COMPLETED
 </details>
 
 **Flow 1: `Idle + ReaderQueue + ReadersActive + WriterActive + WriterQueue = 4`**  
-Total user conservation. Every token is accounted for — no user created or destroyed by the net.
+Total user conservation. Every token is accounted for. No user created or destroyed by the net.
 
 **Flow 2: `FreeSlots + ReadersActive + WriterActive×4 = 4`**  
-This is the strongest result. A writer consumes all 4 free slots (StartWrite requires `FreeSlots*4`). When `WriterActive = 1`, then `FreeSlots + ReadersActive = 0` — meaning **no readers can be active while a writer is active**. This proves S3 (¬(WriterActive ∧ ReadersActive > 0)) structurally, from the net's incidence matrix, not from lock semantics.
+This is the strongest result. A writer consumes all 4 free slots (StartWrite requires `FreeSlots*4`). When `WriterActive = 1`, then `FreeSlots + ReadersActive = 0`. This means **no readers can be active while a writer is active**. This proves S3 (¬(WriterActive ∧ ReadersActive > 0)) structurally, from the net's incidence matrix, not from lock semantics.
 
 **Flow 3: `WriterActive + WriterIdle = 1`**  
 Proves S2: at most one writer at any time. The complementary place design ensures that WriterActive and WriterIdle are mutually exclusive and exhaustive.
 
-**"invariant"** — the net is fully covered by P-invariants (every place belongs to at least one semi-flow).
+**"invariant"** The net is fully covered by P-invariants (every place belongs to at least one semi-flow).
 
-**T-semi-flows: consistent** — the read cycle (RequestRead → StartRead → EndRead) and write cycle (RequestWrite → StartWrite → EndWrite) are both consistent firing sequences, confirming the net has no spurious transitions.
+**T-semi-flows: consistent** The read cycle (RequestRead → StartRead → EndRead) and write cycle (RequestWrite → StartWrite → EndWrite) are both consistent firing sequences, confirming the net has no spurious transitions.
 
 #### TINA Reachability Analysis
 
 <details>
-<summary>Raw TINA reachability digest — rw_coordination</summary>
+<summary>Raw TINA reachability digest: rw_coordination</summary>
 
 ```
 -- reachability digest (rw_coordination.ktz) --
@@ -356,16 +356,16 @@ State 4:
 
 </details>
 
-- **bounded: Y** — no place exceeds its initial tokens in any of 45 reachable states.
-- **live: Y** — every transition is fireable from every reachable state. This is *stronger* than the admission net (which was `live: ?` due to terminal states). The RW net has no dead states because users cycle continuously: Idle → Queue → Active → Idle.
-- **reversible: Y** — the net can always return to its initial marking.
-- **45 states, 112 transitions** — complete state space exploration.
-- **dead: 0** — no deadlocks possible within the RW coordination domain.
+- **bounded: Y** No place exceeds its initial tokens in any of 45 reachable states.
+- **live: Y** Every transition is fireable from every reachable state. This is *stronger* than the admission net (which was `live: ?` due to terminal states). The RW net has no dead states because users cycle continuously: Idle → Queue → Active → Idle.
+- **reversible: Y** The net can always return to its initial marking.
+- **45 states, 112 transitions** Complete state space exploration.
+- **dead: 0** No deadlocks possible within the RW coordination domain.
 
 #### TINA Stepper (Initial State)
 
 <details>
-<summary>Raw TINA stepper output — rw_coordination</summary>
+<summary>Raw TINA stepper output: rw_coordination</summary>
 
 ```
 -- stepper at initial marking --
@@ -376,15 +376,15 @@ Marking: WriterIdle*1, FreeSlots*4, Idle*4
 
 </details>
 
-Both RequestRead and RequestWrite are enabled from the initial state. The net is immediately live — no initialisation sequence required.
+Both RequestRead and RequestWrite are enabled from the initial state. The net is immediately live hence no initialisation sequence required.
 
 ### 5.3 Net Composition
 
-The two nets are orthogonal — they share no places or transitions. The admission net governs *who enters the system*; the RW net governs *what they do once inside*.
+The two nets are orthogonal thus they share no places or transitions. The admission net governs *who enters the system*; the RW net governs *what they do once inside*.
 
 Cross-net deadlock freedom is guaranteed by C9: no thread holds an RW lock while waiting for a semaphore permit. The semaphore is always acquired first. This eliminates any possibility of circular wait across the two coordination domains.
 
-TINA confirms this independence: the admission net has 205 reachable states (`bounded: Y`, `live: ?` — terminal states by design); the RW net has 45 reachable states (`bounded: Y`, `live: Y`, `reversible: Y` — continuous cycling by design). Combined: 250 states explored, 5 P-semi-flows, all safety invariants structurally confirmed.
+TINA confirms this independence: the admission net has 205 reachable states (`bounded: Y`, `live: ?`  terminal states by design); the RW net has 45 reachable states (`bounded: Y`, `live: Y`, `reversible: Y` : continuous cycling by design). Combined: 250 states explored, 5 P-semi-flows, all safety invariants structurally confirmed.
 
 The UML state machine (Figure 7) reflects this composition directly:
 - Top-level states = admission net places
@@ -397,10 +397,10 @@ Basic P/T Petri nets are non-deterministic and cannot model:
 | Property | Why not modellable | Alternative verification |
 |---|---|---|
 | FIFO ordering (L1, L4) | Requires coloured Petri nets or queue nets | `fair=true` constructor guarantee + StressTest 3.6 |
-| Liveness under scheduling | P/T nets cannot model FIFO ordering. However, RW net confirmed `live: Y` and `reversible: Y` by TINA reachability — no structural deadlock within RW domain | Empirical: 280 threads, zero starvation events |
+| Liveness under scheduling | P/T nets cannot model FIFO ordering. However, RW net confirmed `live: Y` and `reversible: Y` by TINA reachability. No structural deadlock within RW domain | Empirical: 280 threads, zero starvation events |
 | Fair lock semantics | Implementation-level, not structural | `ReentrantReadWriteLock(fair=true)` + Phase 7b comparison |
 
-This limitation is documented, not hidden. The scope table in the Phase 3 analysis artifact makes explicit which properties are proven by which method.
+This limitation is documented. The scope table in the Phase 3 analysis artifact makes explicit which properties are proven by which method.
 
 ![Petri Net Analysis](docs/phase3_petri_net_analysis.png)
 *Figure 5. Phase 3 analysis: proof arguments, scope table, and net composition.*
@@ -512,55 +512,55 @@ Every error path is deterministic. No error leaves a semaphore permit leaked, a 
 
 The admission boundary uses `Semaphore(4, fair=true)`. The `fair` parameter activates FIFO ordering on the internal CLH queue (Herlihy and Shavit, 2012), guaranteeing that the longest-waiting thread is served next.
 
-Key implementation detail: the `transitionLock` ensures that `waitingQueue.remove()` and `activeSet.add()` execute atomically. Without this, a TOCTOU race allows two threads to simultaneously pass the duplicate check and both consume permits (Bug #2 — see [§13](#13-bug-register)).
+Key implementation detail: the `transitionLock` ensures that `waitingQueue.remove()` and `activeSet.add()` execute atomically. Without this, a TOCTOU race allows two threads to simultaneously pass the duplicate check and both consume permits (Bug #2: see [§13](#13-bug-register)).
 
 ### 7.2 Readers–Writer Coordination
 
 The coordination boundary uses `ReentrantReadWriteLock(fair=true)`, implementing the readers–writer exclusion protocol of Courtois, Heymans and Parnas (1971):
 
 - Multiple concurrent readers when no writer is active (FR7, S3)
-- Exclusive writer access — all readers and other writers blocked (FR8, S2)
+- Exclusive writer access: all readers and other writers blocked (FR8, S2)
 - Fair FIFO ordering prevents both writer starvation (L2) and reader starvation (L4)
 
 ### 7.3 Why Writers Are Not Starved
 
-Under a non-fair RW lock, a continuous stream of readers can indefinitely prevent a queued writer from acquiring the write lock. Each new reader "barges" ahead of the writer because the read lock is available (no writer currently holds it — the writer is merely *queued*). This is the classic readers-preference problem.
+Under a non-fair RW lock, a continuous stream of readers can indefinitely prevent a queued writer from acquiring the write lock. Each new reader "barges" ahead of the writer because the read lock is available (no writer currently holds it, the writer is merely *queued*). This is the classic readers-preference problem.
 
-Java's `ReentrantReadWriteLock(fair=true)` eliminates this by enforcing a strict FIFO discipline: when a writer is queued, all subsequent readers arriving *after* the writer are serialised behind it in the queue. They cannot barge ahead. The writer waits only for currently-active readers to finish their operations — once those readers call `endRead()`, the writer is next in line and acquires the lock immediately.
+Java's `ReentrantReadWriteLock(fair=true)` eliminates this by enforcing a strict FIFO discipline: when a writer is queued, all subsequent readers arriving *after* the writer are serialised behind it in the queue. They cannot barge ahead. The writer waits only for currently-active readers to finish their operations. Once those readers call `endRead()`, the writer is next in line and acquires the lock immediately.
 
 This means:
 - The writer's maximum wait time is bounded by the longest currently-active read operation, multiplied by the number of readers who were already holding the lock when the writer queued.
-- Under ConRes's demo configuration (5-second read delays, N=4 max users), the worst case is 3 active readers × 5 seconds = 15 seconds — bounded, predictable, and observable in the dashboard.
+- Under ConRes's demo configuration (5-second read delays, N=4 max users), the worst case is 3 active readers × 5 seconds = 15 seconds, bounded, predictable, and observable in the dashboard.
 - Under stress configuration (zero delays), writer wait is measured in microseconds.
 
 The empirical evidence is definitive: Phase 7b's fair-vs-non-fair comparison (5 runs each, 50 threads, 500 operations) recorded **zero writer starvation events** under `fair=true`, compared to measurable starvation under `fair=false`. The throughput cost is 16% — a trade-off accepted explicitly in Phase 1 (NFR3 over NFR5).
 
-### 7.4 Why a Write Buffer Was Considered and Rejected
+### 7.4 Why a rite Buffer Was Considered and Rejected
 
 An alternative approach was considered: decouple write *intent* from write *commit* by buffering writes. Under this scheme, the writer would deposit content into a buffer and return immediately. The buffer would flush to disk after the current readers finish, and subsequent readers behind the writer would read the buffered (not-yet-persisted) content.
 
 This was rejected for four reasons:
 
-1. **S2 becomes ambiguous.** "Writer active" currently means the write lock is held and file IO is in progress — observable, verifiable, bounded. With a buffer, "writer active" could mean the buffer accepted content but the flush hasn't started. The property loses its crisp definition.
+1. **S2 becomes ambiguous.** "Writer active" currently means the write lock is held and file IO is in progress thus observable, verifiable, bounded. With a buffer, "writer active" could mean the buffer accepted content but the flush hasn't started. The property loses its crisp definition.
 
-2. **S10 breaks.** The dashboard would show `Updating: (none)` and an incremented version counter while the file still holds old content. In-memory state and file state diverge — a split-brain that the snapshot model cannot represent.
+2. **S10 breaks.** The dashboard would show `Updating: (none)` and an incremented version counter while the file still holds old content. In-memory state and file state diverge. A split-brain that the snapshot model cannot represent.
 
 3. **Durability is lost.** If the system crashes between buffer acceptance and flush, the write is silently lost. The current system's error handling policy guarantees that a failed write leaves the version counter unchanged and the file intact. The buffer introduces a failure window that violates this guarantee.
 
-4. **The problem reappears inside the buffer.** If two writers submit to the buffer before the first flush completes, the buffer needs its own ordering, conflict resolution, and consistency guarantees — effectively rebuilding the RW lock problem inside the buffer layer, adding complexity without removing serialisation.
+4. **The problem reappears inside the buffer.** If two writers submit to the buffer before the first flush completes, the buffer needs its own ordering, conflict resolution, and consistency guarantees hence effectively rebuilding the RW lock problem inside the buffer layer, adding complexity without removing serialisation.
 
-The write buffer pattern *does* have legitimate applications — write-ahead logs in distributed databases (Mohan et al., 1992), append-only logs in Kafka, write-behind caches in Redis. But these systems accept eventual consistency as a design premise and have explicit conflict resolution. ConRes's consistency model is strict: a read always returns the last successfully committed write. The buffer relaxes this guarantee for a throughput benefit that is unnecessary in a system with N=4 users and bounded lock hold times.
+The write buffer pattern *does* have legitimate applications. write-ahead logs in distributed databases (Mohan et al., 1992), append-only logs in Kafka, write-behind caches in Redis. But these systems accept eventual consistency as a design premise and have explicit conflict resolution. ConRes's consistency model is strict: a read always returns the last successfully committed write. The buffer relaxes this guarantee for a throughput benefit that is unnecessary in a system with N=4 users and bounded lock hold times.
 
 ### 7.5 Session Timeout (L1 Enforcement)
 
-The delivery plan documented assumption A3: "every session terminates in finite time." This is an assumption, not a guarantee. An idle session that never logs out holds a permit indefinitely, starving queued users — violating L1 in practice even though the fair semaphore guarantees it in theory.
+The delivery plan documented assumption A3: "every session terminates in finite time." This is an assumption, not a guarantee. An idle session that never logs out holds a permit indefinitely, starving queued users thus violating L1 in practice even though the fair semaphore guarantees it in theory.
 
 The timeout watchdog converts this assumption into an enforcement:
 
 - `UserSession.lastActivity` is updated on every READ/WRITE via `touchActivity()`.
 - A `ScheduledExecutorService` watchdog polls every 5 seconds.
 - When `idleMs > SESSION_TIMEOUT_MS` (default: 120s), the watchdog sets the thread state to TERMINATED, calls `SessionManager.logout(id)`, and records the event in MetricsCollector.
-- The cleanup path is the existing try-finally chain — forceRelease, active-set removal, semaphore release. No new failure modes. No new locks.
+- The cleanup path is the existing try-finally chain, forceRelease, active-set removal, semaphore release. No new failure modes. No new locks.
 
 This is an instance of lease-based resource management (Gray and Reuter, 1993): the session holds a time-bounded lease on its semaphore permit, automatically revoked on expiry.
 
@@ -734,11 +734,11 @@ This confirms the Phase 1 design decision: fairness is worth the throughput cost
 | # | Test | Result |
 |---|---|---|
 | 3.1 | Duplicate detection under concurrent login | PASS |
-| 3.2 | Auth-before-admission (C8) — invalid user doesn't consume permit | PASS |
-| 3.3 | Rapid cycling (100×) — S8 conservation | PASS |
-| 3.4 | Failed write — lock released, version unchanged | PASS |
+| 3.2 | Auth-before-admission (C8): invalid user doesn't consume permit | PASS |
+| 3.3 | Rapid cycling (100×): S8 conservation | PASS |
+| 3.4 | Failed write: lock released, version unchanged | PASS |
 | 3.5 | ForceRelease clears reader tracking | PASS |
-| 3.6 | Fair ordering — writer served before later-arriving reader | PASS |
+| 3.6 | Fair ordering: writer served before later-arriving reader | PASS |
 | 3.7 | S8 holds during and after concurrent admission bursts | PASS |
 
 ### 10.5 Verification Coverage Summary
@@ -825,28 +825,28 @@ Each scenario follows the structure **Action → Observation → Property** to m
 
 ## 13. Bug Register
 
-### Bug #1 — Wrong-thread lock release
+### Bug #1: Wrong-thread lock release
 
 **Symptom:** `IllegalMonitorStateException` on logout during active read.  
 **Root cause:** `SessionManager.logout()` called `endRead()` from the main thread, but `ReentrantReadWriteLock` requires release from the owning thread.  
 **Fix:** `executor.shutdownNow()` sends interrupt to the session thread. The thread's `finally` block releases the lock from the correct (owning) thread. `forceRelease()` only cleans up tracking state.  
 **Regression test:** SmokeTest #9.
 
-### Bug #2 — TOCTOU race in duplicate session detection
+### Bug #2: TOCTOU race in uplicate session detection
 
 **Symptom:** Two threads simultaneously pass the uniqueness check, both consume permits for the same userID.  
 **Root cause:** `isActive()` and `tryAdmit()` are not atomic.  
 **Fix:** `transitionLock` ensures atomic waiting→active transitions. `pendingAdmissions` set prevents concurrent login attempts during the admission window.  
 **Regression test:** StressTest 3.1.
 
-### Bug #3 — Version increment on failed write
+### Bug #3: Version increment on failed write
 
 **Symptom:** Version counter incremented even when `writeContents()` throws IOException.  
 **Root cause:** Version increment was in the `finally` block (always executes).  
 **Fix:** `incrementVersion()` called ONLY after `result.isSuccess()`, BEFORE `endWrite()` releases the lock.  
 **Regression test:** SmokeTest #6, StressTest 3.4.
 
-### Bug (UI) — Button click silently swallowed
+### Bug (UI): Button click silently swallowed
 
 **Symptom:** R/W/X buttons sometimes fail to register clicks.  
 **Root cause:** 500ms poll rebuilds `innerHTML` of slots container, destroying button DOM elements during click event propagation. `e.target.closest('[data-a]')` returns null for the destroyed element.  
@@ -867,7 +867,7 @@ Each scenario follows the structure **Action → Observation → Property** to m
 
 ---
 
-## 15. CW2 Extensibility — Distributed Evolution
+## 15. CW2 Extensibility: Distributed Evolution
 
 ConRes is explicitly engineered to evolve into DistRes (CW2) without modifying component internals.
 
@@ -879,11 +879,11 @@ ConRes is explicitly engineered to evolve into DistRes (CW2) without modifying c
 | Resource ID parameter | Identifies `ProductSpecification.txt` | Identifies any distributed resource |
 | Version counter in snapshot | Tracks local file mutations | Triggers pub-sub change notification |
 | Snapshot polling model | UI refreshes every 500ms | Replaced by push-based event stream |
-| Web dashboard JSON API | `localhost:9090/api/state` | `server:port/api/state` — same API, different host |
+| Web dashboard JSON API | `localhost:9090/api/state` | `server:port/api/state`, same API, different host |
 | Layered architecture | Neighbour-only communication | Application/logic and data layers separate across network boundary |
 | Session timeout watchdog | Reclaims idle permits locally | Reclaims distributed leases on node failure |
 
-The dashboard already acts as a thin client consuming state via an API. CW2 migration means: swap 6 implementations via dependency injection, point the dashboard at the server's API, add a pub-sub notification channel for write events. The core concurrency logic — semaphore, RW lock, try-finally cleanup — moves to the server node unchanged.
+The dashboard already acts as a thin client consuming state via an API. CW2 migration means: swap 6 implementations via dependency injection, point the dashboard at the server's API, add a pub-sub notification channel for write events. The core concurrency logic, semaphore, RW lock, try-finally cleanup, moves to the server node unchanged.
 
 ---
 
@@ -909,7 +909,7 @@ java -ea -cp target/classes conres.SmokeTest
 java -ea -cp target/classes conres.StressTest
 ```
 
-**Configuration** (`DemoConfig.java`):
+**onfiguration** (`DemoConfig.java`):
 
 | Field | Default | Purpose |
 |---|---|---|
