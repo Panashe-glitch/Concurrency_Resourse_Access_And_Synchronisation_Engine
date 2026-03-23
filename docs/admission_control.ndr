@@ -1,0 +1,31 @@
+h admission_control
+# Admission Control Petri Net - ConRes Phase 3
+# Places: circles with tokens shown
+# Transitions: bars
+# Proves: S1, S6, S8, S9 (partial), C8
+
+# --- Places ---
+p 80 200 UnauthenticatedUsers 6 n
+p 80 450 Rejected 0 n
+p 350 200 WaitingUsers 0 n
+p 530 100 AvailableSlots 4 n
+p 620 200 ActiveUsers 0 n
+p 830 200 LoggedOut 0 n
+
+# --- Transitions ---
+t 210 140 AuthSuccess 0 n
+t 210 340 AuthFailure 0 n
+t 490 200 Admit 0 n
+t 730 200 Logout 0 n
+
+# --- Arcs ---
+e UnauthenticatedUsers AuthSuccess 1 n
+e AuthSuccess WaitingUsers 1 n
+e UnauthenticatedUsers AuthFailure 1 n
+e AuthFailure Rejected 1 n
+e WaitingUsers Admit 1 n
+e AvailableSlots Admit 1 n
+e Admit ActiveUsers 1 n
+e ActiveUsers Logout 1 n
+e Logout AvailableSlots 1 n
+e Logout LoggedOut 1 n

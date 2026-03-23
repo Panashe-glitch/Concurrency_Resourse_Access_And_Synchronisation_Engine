@@ -1,0 +1,10 @@
+# ConRes User Credentials
+# Format: username,ID
+# Security (password hashing) out of scope per scenario.
+John,ENG001
+Pana,ENG002
+Marry,ENG003
+Steve,ENG004
+Nolan,ENG005
+Gray,ENG006
+Mark,ENG007

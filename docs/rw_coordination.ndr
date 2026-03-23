@@ -1,0 +1,52 @@
+h rw_coordination
+# Readers-Writer Coordination Petri Net - ConRes Phase 3
+# Complementary place pattern, pure P/T net
+# Proves: S2, S3, S4
+
+# --- Places ---
+p 80 150 Idle 4 n
+p 250 80 ReaderQueue 0 n
+p 250 350 WriterQueue 0 n
+p 550 80 ReadersActive 0 n
+p 550 350 WriterActive 0 n
+p 400 200 FreeSlots 4 n
+p 700 350 WriterIdle 1 n
+
+# --- Transitions ---
+t 150 80 RequestRead 0 n
+t 150 350 RequestWrite 0 n
+t 400 80 StartRead 0 n
+t 400 350 StartWrite 0 n
+t 700 80 EndRead 0 n
+t 700 200 EndWrite 0 n
+
+# --- Arcs ---
+# Read request path
+e Idle RequestRead 1 n
+e RequestRead ReaderQueue 1 n
+
+# Write request path
+e Idle RequestWrite 1 n
+e RequestWrite WriterQueue 1 n
+
+# StartRead: ReaderQueue + FreeSlots -> ReadersActive
+e ReaderQueue StartRead 1 n
+e FreeSlots StartRead 1 n
+e StartRead ReadersActive 1 n
+
+# EndRead: ReadersActive -> FreeSlots + Idle
+e ReadersActive EndRead 1 n
+e EndRead FreeSlots 1 n
+e EndRead Idle 1 n
+
+# StartWrite: WriterQueue + FreeSlots*4 + WriterIdle -> WriterActive
+e WriterQueue StartWrite 1 n
+e FreeSlots StartWrite 4 n
+e WriterIdle StartWrite 1 n
+e StartWrite WriterActive 1 n
+
+# EndWrite: WriterActive -> FreeSlots*4 + WriterIdle + Idle
+e WriterActive EndWrite 1 n
+e EndWrite FreeSlots 4 n
+e EndWrite WriterIdle 1 n
+e EndWrite Idle 1 n
