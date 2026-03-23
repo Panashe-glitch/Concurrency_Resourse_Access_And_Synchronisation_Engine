@@ -945,5 +945,5 @@ Murata, T. (1989) 'Petri nets: Properties, analysis and applications', *Proceedi
 
 ---
 
-*ConRes is a formally reasoned concurrent system combining structural correctness proofs, machine verification, runtime assertion, and empirical validation. It is not only functionally correct but architecturally extensible — designed from day one to evolve into a distributed system without modifying component internals.*
+*ConRes is a formally reasoned concurrent system combining structural correctness proofs, machine verification, runtime assertion, and empirical validation. It is not only functionally correct but architecturally extensible, designed from day one to evolve into a distributed system without modifying component internals.*
 
