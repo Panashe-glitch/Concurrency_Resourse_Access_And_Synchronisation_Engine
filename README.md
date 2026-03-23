@@ -120,7 +120,7 @@ The V-Model enforces a discipline: no specification exists without a correspondi
 
 ### 3.3 Derived Constraints (C1–C9)
 
-These are not in the scenario — they are derived from analysing the requirements:
+These are not in the scenario as they are derived from analysing the requirements:
 
 | ID | Constraint | Enforces |
 |---|---|---|
