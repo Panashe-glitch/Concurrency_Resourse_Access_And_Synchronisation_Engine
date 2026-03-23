@@ -535,7 +535,7 @@ This means:
 
 The empirical evidence is definitive: Phase 7b's fair-vs-non-fair comparison (5 runs each, 50 threads, 500 operations) recorded **zero writer starvation events** under `fair=true`, compared to measurable starvation under `fair=false`. The throughput cost is 16% — a trade-off accepted explicitly in Phase 1 (NFR3 over NFR5).
 
-### 7.4 Why a rite Buffer Was Considered and Rejected
+### 7.4 Why a Write Buffer Was Considered and Rejected
 
 An alternative approach was considered: decouple write *intent* from write *commit* by buffering writes. Under this scheme, the writer would deposit content into a buffer and return immediately. The buffer would flush to disk after the current readers finish, and subsequent readers behind the writer would read the buffered (not-yet-persisted) content.
 
@@ -945,5 +945,5 @@ Murata, T. (1989) 'Petri nets: Properties, analysis and applications', *Proceedi
 
 ---
 
-*ConRes is a formally reasoned concurrent system combining structural correctness proofs, machine verification, runtime assertion, and empirical validation. It is not only functionally correct but architecturally extensible, designed from day one to evolve into a distributed system without modifying component internals.*
+*ConRes is a formally reasoned concurrent system combining structural correctness proofs, machine verification, runtime assertion, and empirical validation. It is not only functionally correct but architecturally extensible with a Safety, Liveness and Extensibility driven Design which allows the system to evolve naturally into a distributed system without modifying component internals.*
 
