@@ -54,6 +54,7 @@ Most concurrent systems demonstrate correctness anecdotally i.e. "we ran it and 
 3. **Machine verification** Proofs are confirmed by TINA, not trusted as hand calculations.
 4. **Runtime assertion** The dashboard is not a display layer but a verification surface. Every poll cycle checks the same invariants the Petri nets prove. If implementation diverges from model, the dashboard turns red.
 5. **Empirical validation** Stress tests exercise every property under realistic contention, with a continuous invariant monitor running on a background thread.
+6. **Safety, Liveness and Extensibility driven Design** The overall design of this system is architected to archieve a safe, live and extensible system.
 
 The result is a system where correctness is established at four independent levels: structural proof, machine verification, runtime assertion, and empirical stress testing. No single tier is trusted in isolation.
 
@@ -430,7 +431,7 @@ This limitation is documented. The scope table in the Phase 3 analysis artifact 
 └───────────────────────────────────────────┘
 ```
 
-Every layer communicates only with its immediate neighbour. The Presentation Layer never imports a concurrency primitive. The Data Layer never touches a thread. All inter-layer communication passes through defined interfaces (Bass, Clements and Kazman, 2012).
+Every layer communicates only with its immediate neighbour. The Presentation Layer never imports a concurrency primitive. The Data Layer never touches a thread. Clear separation of concerns is enforced as a foundational design principle throughout the system enabling extensibility, maintanability, reusability and most importantly testability. All inter-layer communication passes through defined interfaces (Bass, Clements and Kazman, 2012).
 
 ![Architecture](docs/conres_architecture_compact.png)
 *Figure 7. System architecture with 4 layers, component annotations, and property callouts.*
